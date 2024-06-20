@@ -1,0 +1,32 @@
+{
+  "submissions": [
+    {
+      "name": "Rishi",
+      "email": "rishi@email",
+      "phone": "12345667",
+      "github_link": "http://github/test",
+      "stopwatch_time": 300
+    },
+    {
+      "name": "Kailaash",
+      "email": "kailash@email",
+      "phone": "12345667",
+      "github_link": "http://github/test",
+      "stopwatch_time": 300
+    },
+    {
+      "name": "hi",
+      "email": "saji",
+      "phone": "xmakm",
+      "github_link": "nxaksm",
+      "stopwatch_time": "00:00:03"
+    },
+    {
+      "name": "kailaash",
+      "email": "sri@1234",
+      "phone": "99228833881",
+      "github_link": "yesboss",
+      "stopwatch_time": "00:00:12"
+    }
+  ]
+}
