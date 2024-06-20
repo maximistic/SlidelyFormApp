@@ -1,6 +1,7 @@
 Functionality of Google Forms in a Windows Desktop App:
 
 For the Desktop App, there are 3 interconnected components - MainForm.vb, CreateSubmissionForm.vb and ViewSubmissionForm.vb
+
     - MainForm.vb has 2 buttons, "View Submissions" and "Create New Submission".
     - Clicking the "View Submissions" button opens up a form ("CreateSubmissionForm.vb") to view previous submissions made by the user. 
         - "View Submissions" form has two buttons - "Previous" and "Next". 
@@ -10,12 +11,17 @@ For the Desktop App, there are 3 interconnected components - MainForm.vb, Create
         - The stopwatch does not reset from 0 everytime it is paused.
 
 The Backend (backend > src > app.ts) is an Express App made with TypeScript and using a JSON file as a database to store submissions.
+
     - The backend has 3 endpoints:
         - /ping - A GET request that always returns True
         - /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
         - /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
 
 To run the Backend, make sure the backend folder is placed as follows: bin > Debug > backend. Start by running the server (npm start) in a terminal and when the server is listening (Server is running on http://localhost:3000), run the frontend in visual studio. db.json (backend > src > db.json) acts as the database by storing the form's data.
+
+Use SlidelyFormApp > MainForm.vb, ViewSubmissions.vb and createSubmissionForm.vb and backend > src > app.ts
+
+UpdatedViewSubmissionsForm.vb and updatedapp.ts - above and beyond (have inbuilt buttons to delete forms, search forms using the email id provided). heads up - if the design file doesn't open (due to some duplication error), click on ignore and continue and proceed with running the files.
 
 Some of the working images for reference:
 
