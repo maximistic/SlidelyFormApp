@@ -30,7 +30,7 @@ Public Class ViewSubmissionsForm
 
     Private Sub FetchSubmissions()
         Try
-            Dim jsonFilePath As String = "D:\projects\slidely\SlidelyFormApp\slide\backend\src\db.json"
+            Dim jsonFilePath As String = "backend\src\db.json"
             Dim jsonData As String = File.ReadAllText(jsonFilePath)
             Dim rootObject As RootObject = JsonConvert.DeserializeObject(Of RootObject)(jsonData)
             submissions = rootObject.Submissions
