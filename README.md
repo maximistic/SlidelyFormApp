@@ -10,3 +10,7 @@ For the Desktop App, there are 3 interconnected components - MainForm.vb, Create
         - The stopwatch does not reset from 0 everytime it is paused.
 
 The Backend (backend > src > app.ts) is an Express App made with TypeScript and using a JSON file as a database to store submissions.
+    - The backend has 3 endpoints:
+        - /ping - A GET request that always returns True
+        - /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
+        - /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
