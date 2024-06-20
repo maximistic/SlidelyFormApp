@@ -1,61 +1,37 @@
-Imports System.IO
+Imports System.Net.Http
 Imports Newtonsoft.Json
 
-Public Class ViewSubmissionsForm
+Public Class CreateSubmissionForm
     Inherits System.Windows.Forms.Form
 
-    Private currentSubmissionIndex As Integer = 0
-    Private submissions As List(Of Submission)
+    Private stopwatchRunning As Boolean = False
+    Private stopwatchElapsed As TimeSpan = TimeSpan.Zero
 
-    Private WithEvents btnNext As Button
-    Private WithEvents btnPrevious As Button
-
-
-    Private lblName As Label
-    Private lblEmail As Label
-    Private lblPhone As Label
-    Private lblGitHub As Label
-
-    Private txtName As TextBox
-    Private txtEmail As TextBox
-    Private txtPhone As TextBox
-    Private WithEvents Label1 As Label
-    Private WithEvents TextBox1 As TextBox
+    ' Declare controls
+    Private WithEvents lblName As Label
+    Private WithEvents lblEmail As Label
+    Private WithEvents lblPhone As Label
+    Private WithEvents lblGitHub As Label
+    Private WithEvents txtName As TextBox
+    Private WithEvents txtEmail As TextBox
+    Private WithEvents txtPhone As TextBox
+    Private WithEvents txtGitHub As TextBox
+    Private WithEvents lblStopwatch As Label
+    Private WithEvents btnToggleStopwatch As Button
+    Private WithEvents btnSubmit As Button
+    Private WithEvents components As System.ComponentModel.IContainer
     Friend WithEvents lblTitle As Label
-    Private WithEvents Button1 As Button
-    Private WithEvents TextBox2 As TextBox
-    Private WithEvents Button2 As Button
-    Private txtGitHub As TextBox
+    Private WithEvents Timer1 As Timer
 
+    ' Constructor
     Public Sub New()
+        MyBase.New()
         InitializeComponent()
-        FetchSubmissions()
     End Sub
 
-    Private Sub FetchSubmissions()
-        Try
-            Dim jsonFilePath As String = "backend\src\db.json"
-            Dim jsonData As String = File.ReadAllText(jsonFilePath)
-            Dim rootObject As RootObject = JsonConvert.DeserializeObject(Of RootObject)(jsonData)
-            submissions = rootObject.Submissions
-            ShowSubmission(currentSubmissionIndex)
-        Catch ex As Exception
-            MessageBox.Show("Error fetching submissions: " & ex.Message)
-        End Try
-    End Sub
-
-    Private Sub ShowSubmission(index As Integer)
-        If submissions IsNot Nothing AndAlso index >= 0 AndAlso index < submissions.Count Then
-            Dim submission As Submission = submissions(index)
-            txtName.Text = submission.Name
-            txtEmail.Text = submission.Email
-            txtPhone.Text = submission.Phone
-            txtGitHub.Text = submission.GitHubLink
-            TextBox1.Text = submission.StopwatchTime
-        End If
-    End Sub
-
+    ' Initialize components method
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
         Me.lblName = New System.Windows.Forms.Label()
         Me.lblEmail = New System.Windows.Forms.Label()
         Me.lblPhone = New System.Windows.Forms.Label()
@@ -64,170 +40,134 @@ Public Class ViewSubmissionsForm
         Me.txtEmail = New System.Windows.Forms.TextBox()
         Me.txtPhone = New System.Windows.Forms.TextBox()
         Me.txtGitHub = New System.Windows.Forms.TextBox()
-        Me.btnPrevious = New System.Windows.Forms.Button()
-        Me.btnNext = New System.Windows.Forms.Button()
-        Me.Label1 = New System.Windows.Forms.Label()
-        Me.TextBox1 = New System.Windows.Forms.TextBox()
+        Me.lblStopwatch = New System.Windows.Forms.Label()
+        Me.btnToggleStopwatch = New System.Windows.Forms.Button()
+        Me.btnSubmit = New System.Windows.Forms.Button()
+        Me.Timer1 = New System.Windows.Forms.Timer(Me.components)
         Me.lblTitle = New System.Windows.Forms.Label()
-        Me.Button1 = New System.Windows.Forms.Button()
-        Me.TextBox2 = New System.Windows.Forms.TextBox()
-        Me.Button2 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lblName
         '
+        Me.lblName.AutoSize = True
         Me.lblName.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.lblName.Location = New System.Drawing.Point(22, 126)
+        Me.lblName.Location = New System.Drawing.Point(12, 106)
         Me.lblName.Name = "lblName"
-        Me.lblName.Size = New System.Drawing.Size(100, 20)
-        Me.lblName.TabIndex = 7
-        Me.lblName.Text = "Name"
+        Me.lblName.Size = New System.Drawing.Size(70, 25)
+        Me.lblName.TabIndex = 0
+        Me.lblName.Text = "Name:"
         '
         'lblEmail
         '
+        Me.lblEmail.AutoSize = True
         Me.lblEmail.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.lblEmail.Location = New System.Drawing.Point(22, 168)
+        Me.lblEmail.Location = New System.Drawing.Point(12, 148)
         Me.lblEmail.Name = "lblEmail"
-        Me.lblEmail.Size = New System.Drawing.Size(100, 20)
-        Me.lblEmail.TabIndex = 6
-        Me.lblEmail.Text = "Email"
+        Me.lblEmail.Size = New System.Drawing.Size(66, 25)
+        Me.lblEmail.TabIndex = 1
+        Me.lblEmail.Text = "Email:"
         '
         'lblPhone
         '
+        Me.lblPhone.AutoSize = True
         Me.lblPhone.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.lblPhone.Location = New System.Drawing.Point(22, 206)
+        Me.lblPhone.Location = New System.Drawing.Point(12, 196)
         Me.lblPhone.Name = "lblPhone"
-        Me.lblPhone.Size = New System.Drawing.Size(147, 20)
-        Me.lblPhone.TabIndex = 5
-        Me.lblPhone.Text = "Phone Number "
+        Me.lblPhone.Size = New System.Drawing.Size(115, 25)
+        Me.lblPhone.TabIndex = 2
+        Me.lblPhone.Text = "Phone Num"
         '
         'lblGitHub
         '
+        Me.lblGitHub.AutoSize = True
         Me.lblGitHub.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.lblGitHub.Location = New System.Drawing.Point(22, 245)
+        Me.lblGitHub.Location = New System.Drawing.Point(12, 239)
         Me.lblGitHub.Name = "lblGitHub"
-        Me.lblGitHub.Size = New System.Drawing.Size(100, 20)
-        Me.lblGitHub.TabIndex = 4
-        Me.lblGitHub.Text = "GitHub link"
+        Me.lblGitHub.Size = New System.Drawing.Size(113, 25)
+        Me.lblGitHub.TabIndex = 3
+        Me.lblGitHub.Text = "GitHub Link"
         '
         'txtName
         '
-        Me.txtName.Location = New System.Drawing.Point(220, 124)
+        Me.txtName.Location = New System.Drawing.Point(242, 106)
         Me.txtName.Name = "txtName"
-        Me.txtName.ReadOnly = True
         Me.txtName.Size = New System.Drawing.Size(300, 22)
-        Me.txtName.TabIndex = 3
+        Me.txtName.TabIndex = 4
         '
         'txtEmail
         '
-        Me.txtEmail.Location = New System.Drawing.Point(220, 168)
+        Me.txtEmail.Location = New System.Drawing.Point(242, 148)
         Me.txtEmail.Name = "txtEmail"
-        Me.txtEmail.ReadOnly = True
         Me.txtEmail.Size = New System.Drawing.Size(300, 22)
-        Me.txtEmail.TabIndex = 2
+        Me.txtEmail.TabIndex = 5
         '
         'txtPhone
         '
-        Me.txtPhone.Location = New System.Drawing.Point(220, 204)
+        Me.txtPhone.Location = New System.Drawing.Point(242, 200)
         Me.txtPhone.Name = "txtPhone"
-        Me.txtPhone.ReadOnly = True
         Me.txtPhone.Size = New System.Drawing.Size(300, 22)
-        Me.txtPhone.TabIndex = 1
+        Me.txtPhone.TabIndex = 6
         '
         'txtGitHub
         '
-        Me.txtGitHub.Location = New System.Drawing.Point(220, 245)
+        Me.txtGitHub.Location = New System.Drawing.Point(242, 243)
         Me.txtGitHub.Name = "txtGitHub"
-        Me.txtGitHub.ReadOnly = True
         Me.txtGitHub.Size = New System.Drawing.Size(300, 22)
-        Me.txtGitHub.TabIndex = 0
+        Me.txtGitHub.TabIndex = 7
         '
-        'btnPrevious
+        'lblStopwatch
         '
-        Me.btnPrevious.BackColor = System.Drawing.Color.Khaki
-        Me.btnPrevious.Location = New System.Drawing.Point(12, 345)
-        Me.btnPrevious.Name = "btnPrevious"
-        Me.btnPrevious.Size = New System.Drawing.Size(250, 42)
-        Me.btnPrevious.TabIndex = 4
-        Me.btnPrevious.Text = "Previous (Ctrl + P)"
-        Me.btnPrevious.UseVisualStyleBackColor = False
+        Me.lblStopwatch.AutoSize = True
+        Me.lblStopwatch.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
+        Me.lblStopwatch.Location = New System.Drawing.Point(436, 315)
+        Me.lblStopwatch.Name = "lblStopwatch"
+        Me.lblStopwatch.Size = New System.Drawing.Size(90, 25)
+        Me.lblStopwatch.TabIndex = 8
+        Me.lblStopwatch.Text = "00:00:00"
         '
-        'btnNext
+        'btnToggleStopwatch
         '
-        Me.btnNext.BackColor = System.Drawing.Color.LightSkyBlue
-        Me.btnNext.Location = New System.Drawing.Point(270, 345)
-        Me.btnNext.Name = "btnNext"
-        Me.btnNext.Size = New System.Drawing.Size(250, 42)
-        Me.btnNext.TabIndex = 5
-        Me.btnNext.Text = "Next (Ctrl + N)"
-        Me.btnNext.UseVisualStyleBackColor = False
+        Me.btnToggleStopwatch.BackColor = System.Drawing.Color.Khaki
+        Me.btnToggleStopwatch.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
+        Me.btnToggleStopwatch.Location = New System.Drawing.Point(12, 312)
+        Me.btnToggleStopwatch.Name = "btnToggleStopwatch"
+        Me.btnToggleStopwatch.Size = New System.Drawing.Size(347, 35)
+        Me.btnToggleStopwatch.TabIndex = 9
+        Me.btnToggleStopwatch.Text = "TOGGLE STOPWATCH (Ctrl + T)"
+        Me.btnToggleStopwatch.UseVisualStyleBackColor = False
         '
-        'Label1
+        'btnSubmit
         '
-        Me.Label1.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!)
-        Me.Label1.Location = New System.Drawing.Point(22, 279)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(116, 53)
-        Me.Label1.TabIndex = 8
-        Me.Label1.Text = "StopWatch Time "
+        Me.btnSubmit.BackColor = System.Drawing.Color.LightBlue
+        Me.btnSubmit.Font = New System.Drawing.Font("Microsoft Sans Serif", 10.0!)
+        Me.btnSubmit.Location = New System.Drawing.Point(12, 376)
+        Me.btnSubmit.Name = "btnSubmit"
+        Me.btnSubmit.Size = New System.Drawing.Size(530, 35)
+        Me.btnSubmit.TabIndex = 10
+        Me.btnSubmit.Text = "SUBMIT (Ctrl + S)"
+        Me.btnSubmit.UseVisualStyleBackColor = False
         '
-        'TextBox1
+        'Timer1
         '
-        Me.TextBox1.Location = New System.Drawing.Point(220, 295)
-        Me.TextBox1.Name = "TextBox1"
-        Me.TextBox1.ReadOnly = True
-        Me.TextBox1.Size = New System.Drawing.Size(300, 22)
-        Me.TextBox1.TabIndex = 9
+        Me.Timer1.Interval = 1000
         '
         'lblTitle
         '
         Me.lblTitle.AutoSize = True
         Me.lblTitle.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTitle.Location = New System.Drawing.Point(68, 9)
+        Me.lblTitle.Location = New System.Drawing.Point(87, 33)
         Me.lblTitle.Name = "lblTitle"
-        Me.lblTitle.Size = New System.Drawing.Size(407, 25)
-        Me.lblTitle.TabIndex = 10
-        Me.lblTitle.Text = "John Doe, Slidely Task 2 - View Submissions"
+        Me.lblTitle.Size = New System.Drawing.Size(423, 25)
+        Me.lblTitle.TabIndex = 11
+        Me.lblTitle.Text = "John Doe, Slidely Task 2 - Create Submissions"
         '
-        'Button1
+        'CreateSubmissionForm
         '
-        Me.Button1.BackColor = System.Drawing.Color.Red
-        Me.Button1.Location = New System.Drawing.Point(131, 399)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(250, 42)
-        Me.Button1.TabIndex = 11
-        Me.Button1.Text = "Delete (Ctrl + D)"
-        Me.Button1.UseVisualStyleBackColor = False
-        '
-        Me.TextBox2 = New System.Windows.Forms.TextBox()
-        Me.Button2 = New System.Windows.Forms.Button()
-
-        ' TextBox2
-        Me.TextBox2.Location = New System.Drawing.Point(27, 67)
-        Me.TextBox2.Name = "TextBox2"
-        Me.TextBox2.Size = New System.Drawing.Size(300, 22)
-        Me.Controls.Add(Me.TextBox2)
-
-        ' Button2
-        Me.Button2.BackColor = System.Drawing.Color.DarkCyan
-        Me.Button2.Location = New System.Drawing.Point(333, 57)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(187, 42)
-        Me.Button2.TabIndex = 14
-        Me.Button2.Text = "Search (Ctrl + S)"
-        Me.Button2.UseVisualStyleBackColor = False
-        Me.Controls.Add(Me.Button2)
-
-        '
-        'ViewSubmissionsForm
-        '
-        Me.ClientSize = New System.Drawing.Size(532, 453)
-        Me.Controls.Add(Me.Button2)
-        Me.Controls.Add(Me.TextBox2)
-        Me.Controls.Add(Me.Button1)
+        Me.ClientSize = New System.Drawing.Size(582, 453)
         Me.Controls.Add(Me.lblTitle)
-        Me.Controls.Add(Me.TextBox1)
-        Me.Controls.Add(Me.Label1)
+        Me.Controls.Add(Me.btnSubmit)
+        Me.Controls.Add(Me.btnToggleStopwatch)
+        Me.Controls.Add(Me.lblStopwatch)
         Me.Controls.Add(Me.txtGitHub)
         Me.Controls.Add(Me.txtPhone)
         Me.Controls.Add(Me.txtEmail)
@@ -236,113 +176,102 @@ Public Class ViewSubmissionsForm
         Me.Controls.Add(Me.lblPhone)
         Me.Controls.Add(Me.lblEmail)
         Me.Controls.Add(Me.lblName)
-        Me.Controls.Add(Me.btnNext)
-        Me.Controls.Add(Me.btnPrevious)
-        Me.Name = "ViewSubmissionsForm"
-        Me.Text = "View Submissions"
+        Me.Name = "CreateSubmissionForm"
+        Me.Text = "Create Submission"
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
 
-    Private Sub btnNext_Click(sender As Object, e As EventArgs) Handles btnNext.Click
-        If currentSubmissionIndex < submissions.Count - 1 Then
-            currentSubmissionIndex += 1
-            ShowSubmission(currentSubmissionIndex)
+    Private Sub btnToggleStopwatch_Click(sender As Object, e As EventArgs) Handles btnToggleStopwatch.Click
+        stopwatchRunning = Not stopwatchRunning
+
+        If stopwatchRunning Then
+            Timer1.Start()
+            btnToggleStopwatch.Text = "PAUSE STOPWATCH"
+        Else
+            Timer1.Stop()
+            btnToggleStopwatch.Text = "RESUME STOPWATCH"
         End If
     End Sub
 
-    Private Sub btnPrevious_Click(sender As Object, e As EventArgs) Handles btnPrevious.Click
-        If currentSubmissionIndex > 0 Then
-            currentSubmissionIndex -= 1
-            ShowSubmission(currentSubmissionIndex)
-        End If
-    End Sub
-    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        DeleteCurrentSubmission()
+    Private Sub Timer1_Tick(sender As Object, e As EventArgs) Handles Timer1.Tick
+        stopwatchElapsed = stopwatchElapsed.Add(TimeSpan.FromSeconds(1))
+        lblStopwatch.Text = stopwatchElapsed.ToString("hh\:mm\:ss")
     End Sub
 
-    Private Sub DeleteCurrentSubmission()
+    Private Sub btnSubmit_Click(sender As Object, e As EventArgs) Handles btnSubmit.Click
+        ' Handle submission to backend here
+        Dim name As String = txtName.Text
+        Dim email As String = txtEmail.Text
+        Dim phone As String = txtPhone.Text
+        Dim githubRepo As String = txtGitHub.Text
+        Dim stopwatchTime As String = lblStopwatch.Text
+
+        ' Send this data to backend or save to a database, etc.
+        SubmitData(name, email, phone, githubRepo, stopwatchTime)
+
+        ' Optionally, reset form fields or perform other actions after submission
+        ResetForm()
+    End Sub
+
+    Private Async Sub SubmitData(name As String, email As String, phone As String, githubRepo As String, stopwatchTime As String)
         Try
-            If submissions IsNot Nothing AndAlso currentSubmissionIndex >= 0 AndAlso currentSubmissionIndex < submissions.Count Then
-                submissions.RemoveAt(currentSubmissionIndex)
+            Dim client As New HttpClient()
+            Dim submission As New With {
+                .name = name,
+                .email = email,
+                .phone = phone,
+                .github_link = githubRepo,
+                .stopwatch_time = stopwatchTime
+            }
+            Dim json As String = JsonConvert.SerializeObject(submission)
+            Dim content As New StringContent(json, System.Text.Encoding.UTF8, "application/json")
+            Dim response As HttpResponseMessage = Await client.PostAsync("http://localhost:3000/submit", content)
 
-                ' Serialize updated submissions back to JSON
-                Dim rootObject As New RootObject()
-                rootObject.Submissions = submissions
-
-                Dim jsonOutput As String = JsonConvert.SerializeObject(rootObject, Formatting.Indented)
-                Dim jsonFilePath As String = "backend\src\db.json"
-                File.WriteAllText(jsonFilePath, jsonOutput)
-
-                ' Show next submission after deletion
-                If currentSubmissionIndex >= submissions.Count Then
-                    currentSubmissionIndex = submissions.Count - 1
-                End If
-                ShowSubmission(currentSubmissionIndex)
-
-                ' Show deletion confirmation message
-                MessageBox.Show("Submission deleted successfully.", "Deletion Confirmation", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            If response.IsSuccessStatusCode Then
+                MessageBox.Show("Submission successful!")
+            Else
+                MessageBox.Show("Submission failed: " & response.ReasonPhrase)
             End If
         Catch ex As Exception
-            MessageBox.Show("Error deleting submission: " & ex.Message, "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("Error submitting data: " & ex.Message)
         End Try
     End Sub
 
-    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        Dim searchText As String = TextBox2.Text.Trim()
-        If Not String.IsNullOrEmpty(searchText) Then
-            Dim foundIndex As Integer = FindSubmissionByEmail(searchText)
-            If foundIndex <> -1 Then
-                currentSubmissionIndex = foundIndex
-                ShowSubmission(currentSubmissionIndex)
-            Else
-                MessageBox.Show($"Submission with email '{searchText}' not found.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
-        Else
-            MessageBox.Show("Please enter an email to search.", "Search Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        End If
+    Private Sub ResetForm()
+        ' Reset form fields and stopwatch display
+        txtName.Text = ""
+        txtEmail.Text = ""
+        txtPhone.Text = ""
+        txtGitHub.Text = ""
+        lblStopwatch.Text = "00:00:00"
+        stopwatchElapsed = TimeSpan.Zero
+        stopwatchRunning = False
+        btnToggleStopwatch.Text = "TOGGLE STOPWATCH"
+        Timer1.Stop()
     End Sub
 
-    Private Function FindSubmissionByEmail(email As String) As Integer
-        If submissions IsNot Nothing Then
-            For i As Integer = 0 To submissions.Count - 1
-                If String.Equals(submissions(i).Email, email, StringComparison.OrdinalIgnoreCase) Then
-                    Return i
-                End If
-            Next
-        End If
-        Return -1
-    End Function
+    Private Sub txtName_TextChanged(sender As Object, e As EventArgs) Handles txtName.TextChanged
+        ' Handle text change event if needed
+    End Sub
 
+    Private Sub CreateSubmissionForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' Form load event handler
+    End Sub
 
-    ' Define the Submission class and the RootObject class
-    Public Class Submission
-        Public Property Name As String
-        Public Property Email As String
-        Public Property Phone As String
-        <JsonProperty("github_link")>
-        Public Property GitHubLink As String
-        <JsonProperty("stopwatch_time")>
-        Public Property StopwatchTime As String
-    End Class
-
-    Public Class RootObject
-        Public Property Submissions As List(Of Submission)
-    End Class
+    Private Sub lblStopwatch_Click(sender As Object, e As EventArgs) Handles lblStopwatch.Click
+        ' Handle label click event if needed
+    End Sub
 
     Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
-        If keyData = (Keys.Control Or Keys.P) Then
-            btnPrevious.PerformClick()
+        If keyData = (Keys.Control Or Keys.T) Then
+            btnToggleStopwatch.PerformClick()
             Return True
-        ElseIf keyData = (Keys.Control Or Keys.N) Then
-            btnNext.PerformClick()
-            Return True
-        ElseIf keyData = (Keys.Control Or Keys.D) Then
-            Button1.PerformClick()
+        ElseIf keyData = (Keys.Control Or Keys.S) Then
+            btnSubmit.PerformClick()
             Return True
         End If
         Return MyBase.ProcessCmdKey(msg, keyData)
     End Function
-
 End Class
