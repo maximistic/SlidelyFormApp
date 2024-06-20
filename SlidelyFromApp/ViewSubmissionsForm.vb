@@ -21,6 +21,7 @@ Public Class ViewSubmissionsForm
     Private WithEvents Label1 As Label
     Private WithEvents TextBox1 As TextBox
     Friend WithEvents lblTitle As Label
+    Private WithEvents Button1 As Button
     Private txtGitHub As TextBox
 
     Public Sub New()
@@ -65,6 +66,7 @@ Public Class ViewSubmissionsForm
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.lblTitle = New System.Windows.Forms.Label()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lblName
@@ -138,7 +140,7 @@ Public Class ViewSubmissionsForm
         'btnPrevious
         '
         Me.btnPrevious.BackColor = System.Drawing.Color.Khaki
-        Me.btnPrevious.Location = New System.Drawing.Point(12, 381)
+        Me.btnPrevious.Location = New System.Drawing.Point(12, 345)
         Me.btnPrevious.Name = "btnPrevious"
         Me.btnPrevious.Size = New System.Drawing.Size(250, 42)
         Me.btnPrevious.TabIndex = 4
@@ -148,7 +150,7 @@ Public Class ViewSubmissionsForm
         'btnNext
         '
         Me.btnNext.BackColor = System.Drawing.Color.LightSkyBlue
-        Me.btnNext.Location = New System.Drawing.Point(270, 381)
+        Me.btnNext.Location = New System.Drawing.Point(270, 345)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(250, 42)
         Me.btnNext.TabIndex = 5
@@ -182,9 +184,20 @@ Public Class ViewSubmissionsForm
         Me.lblTitle.TabIndex = 10
         Me.lblTitle.Text = "John Doe, Slidely Task 2 - View Submissions"
         '
+        'Button1
+        '
+        Me.Button1.BackColor = System.Drawing.Color.Red
+        Me.Button1.Location = New System.Drawing.Point(131, 399)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(250, 42)
+        Me.Button1.TabIndex = 11
+        Me.Button1.Text = "Delete (Ctrl + D)"
+        Me.Button1.UseVisualStyleBackColor = False
+        '
         'ViewSubmissionsForm
         '
         Me.ClientSize = New System.Drawing.Size(532, 453)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.lblTitle)
         Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.Label1)
@@ -218,7 +231,33 @@ Public Class ViewSubmissionsForm
             ShowSubmission(currentSubmissionIndex)
         End If
     End Sub
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        DeleteCurrentSubmission()
+    End Sub
 
+    Private Sub DeleteCurrentSubmission()
+        Try
+            If submissions IsNot Nothing AndAlso currentSubmissionIndex >= 0 AndAlso currentSubmissionIndex < submissions.Count Then
+                submissions.RemoveAt(currentSubmissionIndex)
+
+                ' Serialize updated submissions back to JSON
+                Dim rootObject As New RootObject()
+                rootObject.Submissions = submissions
+
+                Dim jsonOutput As String = JsonConvert.SerializeObject(rootObject, Formatting.Indented)
+                Dim jsonFilePath As String = "backend\src\db.json"
+                File.WriteAllText(jsonFilePath, jsonOutput)
+
+                ' Show next submission after deletion
+                If currentSubmissionIndex >= submissions.Count Then
+                    currentSubmissionIndex = submissions.Count - 1
+                End If
+                ShowSubmission(currentSubmissionIndex)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error deleting submission: " & ex.Message)
+        End Try
+    End Sub
 
     ' Define the Submission class and the RootObject class
     Public Class Submission
@@ -241,6 +280,9 @@ Public Class ViewSubmissionsForm
             Return True
         ElseIf keyData = (Keys.Control Or Keys.N) Then
             btnNext.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.D) Then
+            Button1.PerformClick()
             Return True
         End If
         Return MyBase.ProcessCmdKey(msg, keyData)
