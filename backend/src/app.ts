@@ -56,3 +56,22 @@ app.get("/read", (req: Request, res: Response) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.delete("/delete/:index", (req: Request, res: Response) => {
+  const index = parseInt(req.params.index);
+
+  // Read existing submissions
+  const data = JSON.parse(fs.readFileSync(dbPath, "utf-8"));
+
+  if (index < 0 || index >= data.submissions.length) {
+    return res.status(404).send("Submission not found.");
+  }
+
+  // Remove submission at index
+  data.submissions.splice(index, 1);
+
+  // Write updated submissions back to JSON file
+  fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
+
+  res.status(200).send("Submission deleted.");
+});
