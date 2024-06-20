@@ -10,6 +10,7 @@ Public Class ViewSubmissionsForm
     Private WithEvents btnNext As Button
     Private WithEvents btnPrevious As Button
 
+
     Private lblName As Label
     Private lblEmail As Label
     Private lblPhone As Label
@@ -22,6 +23,8 @@ Public Class ViewSubmissionsForm
     Private WithEvents TextBox1 As TextBox
     Friend WithEvents lblTitle As Label
     Private WithEvents Button1 As Button
+    Private WithEvents TextBox2 As TextBox
+    Private WithEvents Button2 As Button
     Private txtGitHub As TextBox
 
     Public Sub New()
@@ -67,6 +70,8 @@ Public Class ViewSubmissionsForm
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.lblTitle = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.Button2 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lblName
@@ -178,7 +183,7 @@ Public Class ViewSubmissionsForm
         '
         Me.lblTitle.AutoSize = True
         Me.lblTitle.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTitle.Location = New System.Drawing.Point(68, 36)
+        Me.lblTitle.Location = New System.Drawing.Point(68, 9)
         Me.lblTitle.Name = "lblTitle"
         Me.lblTitle.Size = New System.Drawing.Size(407, 25)
         Me.lblTitle.TabIndex = 10
@@ -194,9 +199,31 @@ Public Class ViewSubmissionsForm
         Me.Button1.Text = "Delete (Ctrl + D)"
         Me.Button1.UseVisualStyleBackColor = False
         '
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.Button2 = New System.Windows.Forms.Button()
+
+        ' TextBox2
+        Me.TextBox2.Location = New System.Drawing.Point(27, 67)
+        Me.TextBox2.Name = "TextBox2"
+        Me.TextBox2.Size = New System.Drawing.Size(300, 22)
+        Me.Controls.Add(Me.TextBox2)
+
+        ' Button2
+        Me.Button2.BackColor = System.Drawing.Color.DarkCyan
+        Me.Button2.Location = New System.Drawing.Point(333, 57)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(187, 42)
+        Me.Button2.TabIndex = 14
+        Me.Button2.Text = "Search (Ctrl + S)"
+        Me.Button2.UseVisualStyleBackColor = False
+        Me.Controls.Add(Me.Button2)
+
+        '
         'ViewSubmissionsForm
         '
         Me.ClientSize = New System.Drawing.Size(532, 453)
+        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.TextBox2)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.lblTitle)
         Me.Controls.Add(Me.TextBox1)
@@ -253,11 +280,41 @@ Public Class ViewSubmissionsForm
                     currentSubmissionIndex = submissions.Count - 1
                 End If
                 ShowSubmission(currentSubmissionIndex)
+
+                ' Show deletion confirmation message
+                MessageBox.Show("Submission deleted successfully.", "Deletion Confirmation", MessageBoxButtons.OK, MessageBoxIcon.Information)
             End If
         Catch ex As Exception
-            MessageBox.Show("Error deleting submission: " & ex.Message)
+            MessageBox.Show("Error deleting submission: " & ex.Message, "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim searchText As String = TextBox2.Text.Trim()
+        If Not String.IsNullOrEmpty(searchText) Then
+            Dim foundIndex As Integer = FindSubmissionByEmail(searchText)
+            If foundIndex <> -1 Then
+                currentSubmissionIndex = foundIndex
+                ShowSubmission(currentSubmissionIndex)
+            Else
+                MessageBox.Show($"Submission with email '{searchText}' not found.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Else
+            MessageBox.Show("Please enter an email to search.", "Search Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Function FindSubmissionByEmail(email As String) As Integer
+        If submissions IsNot Nothing Then
+            For i As Integer = 0 To submissions.Count - 1
+                If String.Equals(submissions(i).Email, email, StringComparison.OrdinalIgnoreCase) Then
+                    Return i
+                End If
+            Next
+        End If
+        Return -1
+    End Function
+
 
     ' Define the Submission class and the RootObject class
     Public Class Submission
