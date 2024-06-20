@@ -17,6 +17,8 @@ The Backend (backend > src > app.ts) is an Express App made with TypeScript and 
         - /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
         - /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
 
+If the files are not organized properly, try to download the zip file (slidelytask2.zip) directly and use it.
+
 To run the Backend, make sure the backend folder is placed as follows: bin > Debug > backend. Start by running the server (npm start) in a terminal and when the server is listening (Server is running on http://localhost:3000), run the frontend in visual studio. db.json (backend > src > db.json) acts as the database by storing the form's data.
 
 Use SlidelyFormApp > MainForm.vb, ViewSubmissions.vb and createSubmissionForm.vb and backend > src > app.ts
