@@ -1,4 +1,4 @@
-﻿Imports System.IO
+Imports System.IO
 Imports Newtonsoft.Json
 
 Public Class ViewSubmissionsForm
@@ -219,6 +219,7 @@ Public Class ViewSubmissionsForm
         End If
     End Sub
 
+
     ' Define the Submission class and the RootObject class
     Public Class Submission
         Public Property Name As String
@@ -233,5 +234,16 @@ Public Class ViewSubmissionsForm
     Public Class RootObject
         Public Property Submissions As List(Of Submission)
     End Class
+
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        If keyData = (Keys.Control Or Keys.P) Then
+            btnPrevious.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.N) Then
+            btnNext.PerformClick()
+            Return True
+        End If
+        Return MyBase.ProcessCmdKey(msg, keyData)
+    End Function
 
 End Class
