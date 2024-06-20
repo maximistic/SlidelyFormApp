@@ -263,4 +263,15 @@ Public Class CreateSubmissionForm
     Private Sub lblStopwatch_Click(sender As Object, e As EventArgs) Handles lblStopwatch.Click
         ' Handle label click event if needed
     End Sub
+
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        If keyData = (Keys.Control Or Keys.T) Then
+            btnToggleStopwatch.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.S) Then
+            btnSubmit.PerformClick()
+            Return True
+        End If
+        Return MyBase.ProcessCmdKey(msg, keyData)
+    End Function
 End Class
