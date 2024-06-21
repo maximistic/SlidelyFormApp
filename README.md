@@ -1,34 +1,58 @@
-If the files are not organized properly, download the zip file (slidelytask2.zip) directly and use it. It has all the necessary conditions satisfied to run the web app.
+# SlidelyFormApp
+Replicating the functionality of Google Forms in a Windows Desktop App
 
-**Functionality of Google Forms in a Windows Desktop App:**
+## Overview
+A Windows Forms application that allows users to create, view, search, and delete submissions similar to a Google Form including fields such as Name, Email, Phone number, Github Repo Link and Stopwatch-Time. 
+A Sleek Windows Forms application that brings the Functionality of a basic Google Forms right to your Desktop. This app lets you effortlessly create, view, search, and delete submissions with ease, capturing  essential details such as Name, Email, Phone Number, GitHub Repo Link, and Stopwatch Time, all with a user-friendly interface.
 
-**For the Desktop App, there are 3 interconnected components - MainForm.vb, CreateSubmissionForm.vb and ViewSubmissionForm.vb**
+## The Desktop App has 3 interconnected components - MainForm.vb, CreateSubmissionForm.vb and ViewSubmissionForm.vb
 
-    - MainForm.vb has 2 buttons, "View Submissions" and "Create New Submission".
-    - Clicking the "View Submissions" button opens up a form ("CreateSubmissionForm.vb") to view previous submissions made by the user. 
-        - "View Submissions" form has two buttons - "Previous" and "Next". 
-        - By default, the "View Submissions" form displays the first entry. previous and next buttons let the user go through all form entries one by one.
-    - Clicking the "Create New Submission" button opens up a form to create submissions.
-        - It has editable fields for Name, Email, Phone Number, a GitHub repo link. This form also has a button that resumes and pauses a stopwatch.
-        - The stopwatch does not reset from 0 everytime it is paused.
+    * MainForm.vb has 2 buttons, "View Submissions" and "Create New Submission".
+    * Clicking the "View Submissions" button opens up a form ("ViewSubmissionsForm.vb") to view previous submissions made by the user. 
+        * ViewSubmissionsForm.vb form has two buttons - "Previous" and "Next". 
+        * By default, the "View Submissions" form displays the first entry. previous and next buttons let the user go through all form entries one by one.
+    * Clicking the "Create New Submission" button opens up a form to create submissions.
+        * It has editable fields for Name, Email, Phone Number, a GitHub repo link. This form also has a button that resumes and pauses a stopwatch.
+        * The stopwatch does not reset from 0 everytime it is paused.
 
-**The Backend (backend > src > app.ts) is an Express App made with TypeScript and using a JSON file as a database to store submissions.**
+ ## The Backend (backend > src > app.ts) is an Express App made with TypeScript and using a JSON file as a database to store submissions.
 
-    - The backend has 3 endpoints:
-        - /ping - A GET request that always returns True
-        - /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
-        - /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
+    * The backend has 3 endpoints:
+        * /ping - A GET request that always returns True
+        * /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
+        * /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
 
-- To run the Backend, make sure the backend folder is placed as follows:** bin > Debug > backend**. 
-- make sure the following are installed:
--     npm install
-      npm install express body-parser @types/express @types/body-parser @types/node
+## How to Install and use this project
 
-- Start by running the server (**npm start**) in a terminal and when the server is listening (Server is running on http://localhost:3000), run the frontend in visual studio. db.json (backend > src > db.json) acts as the database by storing the form's data.
+1. Clone the project
+2. Open SlidelyFormAPP and click on FormApp.sln (which opens up a Visual Studio Window)
+3. MainForm.vb, CreateSubmissionForm.vb and ViewSubmissionsForm.vb are the 3 files to open up.
+4. If ViewSubmissionsForm.vb returns an error while opening, click on "Ignore and Continue" followed by "Yes"
+5. Before running the desktop app, setup the node js dependencies as:
+        npm install
+        npm install express body-parser @types/express @types/body-parser @types/node
+6. Once all the dependencies are set, navigate to bin > Debug > backend and run the following command to start the backend server 
+        npm start
+7. Once the Backend is up and running and the server is listening (Server is running on http://localhost:3000), run the Desktop App in visual studio.
 
-Use SlidelyFormApp > MainForm.vb, ViewSubmissions.vb and createSubmissionForm.vb and backend > src > app.ts
 
-UpdatedViewSubmissionsForm.vb and updatedapp.ts - above and beyond (have inbuilt buttons to delete forms, search forms using the email id provided). heads up - if the design file doesn't open (due to some duplication error), click on ignore and continue and proceed with running the files.
+db.json (backend > src > db.json) acts as the database by storing the form's data.
+
+## Features of the project
+1. Navigate Between Create and View Submissions 
+2. Create New Submissions 
+3. View existing Submissions
+4. Search Submissions by their Email address
+5. Delete Submissions from the database
+6. Stop Watch
+
+## Keyboard Shortcuts
+1. Ctrl + V : VIEW SUBMISSIONS
+2. Ctrl + N : CREATE NEW SUBMISSION/ NEXT 
+3. Ctrl + S : SEARCH/ SUBMIT
+4. Ctrl + P : PREVIOUS
+5. Ctrl + D : DELETE
+6. Ctrl + T : TOGGLE STOPWATCH
 
 Some working images for reference:
 
