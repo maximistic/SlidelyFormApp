@@ -19,7 +19,12 @@ If the files are not organized properly, download the zip file (slidelytask2.zip
         - /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
         - /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
 
-To run the Backend, make sure the backend folder is placed as follows:** bin > Debug > backend**. Start by running the server (**npm start**) in a terminal and when the server is listening (Server is running on http://localhost:3000), run the frontend in visual studio. db.json (backend > src > db.json) acts as the database by storing the form's data.
+- To run the Backend, make sure the backend folder is placed as follows:** bin > Debug > backend**. 
+- make sure the following are installed:
+-     npm install
+      npm install express body-parser @types/express @types/body-parser @types/node
+
+- Start by running the server (**npm start**) in a terminal and when the server is listening (Server is running on http://localhost:3000), run the frontend in visual studio. db.json (backend > src > db.json) acts as the database by storing the form's data.
 
 Use SlidelyFormApp > MainForm.vb, ViewSubmissions.vb and createSubmissionForm.vb and backend > src > app.ts
 
