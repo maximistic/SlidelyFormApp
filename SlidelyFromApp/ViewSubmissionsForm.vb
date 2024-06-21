@@ -1,4 +1,4 @@
-Imports System.IO
+﻿Imports System.IO
 Imports Newtonsoft.Json
 
 Public Class ViewSubmissionsForm
@@ -9,6 +9,7 @@ Public Class ViewSubmissionsForm
 
     Private WithEvents btnNext As Button
     Private WithEvents btnPrevious As Button
+
 
     Private lblName As Label
     Private lblEmail As Label
@@ -21,6 +22,9 @@ Public Class ViewSubmissionsForm
     Private WithEvents Label1 As Label
     Private WithEvents TextBox1 As TextBox
     Friend WithEvents lblTitle As Label
+    Private WithEvents Button1 As Button
+    Private WithEvents TextBox2 As TextBox
+    Private WithEvents Button2 As Button
     Private txtGitHub As TextBox
 
     Public Sub New()
@@ -30,7 +34,7 @@ Public Class ViewSubmissionsForm
 
     Private Sub FetchSubmissions()
         Try
-            Dim jsonFilePath As String = "D:\projects\slidely\SlidelyFormApp\slide\backend\src\db.json"
+            Dim jsonFilePath As String = "backend\src\db.json"
             Dim jsonData As String = File.ReadAllText(jsonFilePath)
             Dim rootObject As RootObject = JsonConvert.DeserializeObject(Of RootObject)(jsonData)
             submissions = rootObject.Submissions
@@ -65,6 +69,9 @@ Public Class ViewSubmissionsForm
         Me.Label1 = New System.Windows.Forms.Label()
         Me.TextBox1 = New System.Windows.Forms.TextBox()
         Me.lblTitle = New System.Windows.Forms.Label()
+        Me.Button1 = New System.Windows.Forms.Button()
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.Button2 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'lblName
@@ -138,7 +145,7 @@ Public Class ViewSubmissionsForm
         'btnPrevious
         '
         Me.btnPrevious.BackColor = System.Drawing.Color.Khaki
-        Me.btnPrevious.Location = New System.Drawing.Point(12, 381)
+        Me.btnPrevious.Location = New System.Drawing.Point(12, 345)
         Me.btnPrevious.Name = "btnPrevious"
         Me.btnPrevious.Size = New System.Drawing.Size(250, 42)
         Me.btnPrevious.TabIndex = 4
@@ -148,7 +155,7 @@ Public Class ViewSubmissionsForm
         'btnNext
         '
         Me.btnNext.BackColor = System.Drawing.Color.LightSkyBlue
-        Me.btnNext.Location = New System.Drawing.Point(270, 381)
+        Me.btnNext.Location = New System.Drawing.Point(270, 345)
         Me.btnNext.Name = "btnNext"
         Me.btnNext.Size = New System.Drawing.Size(250, 42)
         Me.btnNext.TabIndex = 5
@@ -176,15 +183,48 @@ Public Class ViewSubmissionsForm
         '
         Me.lblTitle.AutoSize = True
         Me.lblTitle.Font = New System.Drawing.Font("Microsoft Sans Serif", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.lblTitle.Location = New System.Drawing.Point(68, 36)
+        Me.lblTitle.Location = New System.Drawing.Point(68, 9)
         Me.lblTitle.Name = "lblTitle"
         Me.lblTitle.Size = New System.Drawing.Size(407, 25)
         Me.lblTitle.TabIndex = 10
         Me.lblTitle.Text = "John Doe, Slidely Task 2 - View Submissions"
         '
+        'Button1
+        '
+        Me.Button1.BackColor = System.Drawing.Color.Red
+        Me.Button1.Location = New System.Drawing.Point(131, 399)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(250, 42)
+        Me.Button1.TabIndex = 11
+        Me.Button1.Text = "Delete (Ctrl + D)"
+        Me.Button1.UseVisualStyleBackColor = False
+        '
+        Me.TextBox2 = New System.Windows.Forms.TextBox()
+        Me.Button2 = New System.Windows.Forms.Button()
+
+        ' TextBox2
+        Me.TextBox2.Location = New System.Drawing.Point(27, 67)
+        Me.TextBox2.Name = "TextBox2"
+        Me.TextBox2.Size = New System.Drawing.Size(300, 22)
+        Me.Controls.Add(Me.TextBox2)
+
+        ' Button2
+        Me.Button2.BackColor = System.Drawing.Color.DarkCyan
+        Me.Button2.Location = New System.Drawing.Point(333, 57)
+        Me.Button2.Name = "Button2"
+        Me.Button2.Size = New System.Drawing.Size(187, 42)
+        Me.Button2.TabIndex = 14
+        Me.Button2.Text = "Search (Ctrl + S)"
+        Me.Button2.UseVisualStyleBackColor = False
+        Me.Controls.Add(Me.Button2)
+
+        '
         'ViewSubmissionsForm
         '
         Me.ClientSize = New System.Drawing.Size(532, 453)
+        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.TextBox2)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.lblTitle)
         Me.Controls.Add(Me.TextBox1)
         Me.Controls.Add(Me.Label1)
@@ -218,6 +258,63 @@ Public Class ViewSubmissionsForm
             ShowSubmission(currentSubmissionIndex)
         End If
     End Sub
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        DeleteCurrentSubmission()
+    End Sub
+
+    Private Sub DeleteCurrentSubmission()
+        Try
+            If submissions IsNot Nothing AndAlso currentSubmissionIndex >= 0 AndAlso currentSubmissionIndex < submissions.Count Then
+                submissions.RemoveAt(currentSubmissionIndex)
+
+                ' Serialize updated submissions back to JSON
+                Dim rootObject As New RootObject()
+                rootObject.Submissions = submissions
+
+                Dim jsonOutput As String = JsonConvert.SerializeObject(rootObject, Formatting.Indented)
+                Dim jsonFilePath As String = "backend\src\db.json"
+                File.WriteAllText(jsonFilePath, jsonOutput)
+
+                ' Show next submission after deletion
+                If currentSubmissionIndex >= submissions.Count Then
+                    currentSubmissionIndex = submissions.Count - 1
+                End If
+                ShowSubmission(currentSubmissionIndex)
+
+                ' Show deletion confirmation message
+                MessageBox.Show("Submission deleted successfully.", "Deletion Confirmation", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Error deleting submission: " & ex.Message, "Deletion Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Dim searchText As String = TextBox2.Text.Trim()
+        If Not String.IsNullOrEmpty(searchText) Then
+            Dim foundIndex As Integer = FindSubmissionByEmail(searchText)
+            If foundIndex <> -1 Then
+                currentSubmissionIndex = foundIndex
+                ShowSubmission(currentSubmissionIndex)
+            Else
+                MessageBox.Show($"Submission with email '{searchText}' not found.", "Search Result", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Else
+            MessageBox.Show("Please enter an email to search.", "Search Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Function FindSubmissionByEmail(email As String) As Integer
+        If submissions IsNot Nothing Then
+            For i As Integer = 0 To submissions.Count - 1
+                If String.Equals(submissions(i).Email, email, StringComparison.OrdinalIgnoreCase) Then
+                    Return i
+                End If
+            Next
+        End If
+        Return -1
+    End Function
+
 
     ' Define the Submission class and the RootObject class
     Public Class Submission
@@ -233,5 +330,22 @@ Public Class ViewSubmissionsForm
     Public Class RootObject
         Public Property Submissions As List(Of Submission)
     End Class
+
+    Protected Overrides Function ProcessCmdKey(ByRef msg As Message, keyData As Keys) As Boolean
+        If keyData = (Keys.Control Or Keys.P) Then
+            btnPrevious.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.N) Then
+            btnNext.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.D) Then
+            Button1.PerformClick()
+            Return True
+        ElseIf keyData = (Keys.Control Or Keys.S) Then
+            Button2.PerformClick()
+            Return True
+        End If
+        Return MyBase.ProcessCmdKey(msg, keyData)
+    End Function
 
 End Class

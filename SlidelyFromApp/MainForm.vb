@@ -1,4 +1,4 @@
-Partial Class MainForm
+﻿Partial Class MainForm
     Inherits System.Windows.Forms.Form
 
     Private Sub btnViewSubmissions_Click(sender As Object, e As EventArgs) Handles btnViewSubmissions.Click
