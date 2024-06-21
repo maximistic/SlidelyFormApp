@@ -8,13 +8,20 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
 
 **1. The Desktop App - has 3 interconnected components => MainForm.vb, CreateSubmissionForm.vb, and ViewSubmissionForm.vb**
 
-1. **MainForm.vb** has 2 buttons: "View Submissions" and "Create New Submission".
+1. **MainForm.vb** is the entry point to the Desktop App and has 2 buttons: "View Submissions" and "Create New Submission".
+    **View Submission** displays the first form if available, else an empty form.
+    **Create New Submission** Displays and empty editable form that collects details from the user.
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/1afa98ca-7f7a-4b02-8e60-81931bc248de" alt="MainForm" width="350" height="300">
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/1afa98ca-7f7a-4b02-8e60-81931bc248de" alt="MainForm" width="400" height="300">
     
-2. Clicking the "View Submissions" button opens up a form ("ViewSubmissionsForm.vb") to view previous submissions made by the user.
+2. **ViewSubmissionForm.vb** is opened on clicking the "View Submissions" button in the MainForm.vb to view previous submissions made by the user.
+    **Buttons:**
+    * Search (Ctrl + S)   - used to search forms by the user email id
+    * Previous (Ctrl + P) - used to navigate to the previous form if it exists
+    * Next (Ctrl + N)     - used to navigate to the next form if it exists
+    * Delete (Ctrl + D)   - used to delete the current form from the database
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/b73f1fc7-02fe-4947-b4cb-8b9e1ae6aa5f" alt="ViewSubmissionsForm" width="350" height="300"> 
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/b73f1fc7-02fe-4947-b4cb-8b9e1ae6aa5f" alt="ViewSubmissionsForm" width="400" height="300"> 
 
     * **ViewSubmissionsForm.vb** form has four buttons - "Previous", "Next", "Search", and "Delete".
 
@@ -24,8 +31,17 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
     * By default, the "View Submissions" form displays the first entry. The "Previous" and "Next" buttons let the user go through all form entries one by one.
 
 3. Clicking the "Create New Submission" button opens up a form to create submissions.
+    **Buttons:**
+    * Toggle Stopwatch (Ctrl + T)   - used to search forms by the user email id
+    * Submit (Ctrl + S) - used to navigate to the previous form if it exists
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/17fc0523-1a1d-4e2d-8893-5098cf1452f5" alt="CreateSubmissionForm" width="350" height="300">
+    **Fields**
+    * Name 
+    * Email - email@gmail.com
+    * Phone number - **********
+    * Github Link - Github.com/user
+    
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/17fc0523-1a1d-4e2d-8893-5098cf1452f5" alt="CreateSubmissionForm" width="400" height="300">
 
     * It has editable fields for Name, Email, Phone Number, and a GitHub repo link. This form also has a button that resumes and pauses a stopwatch.
 
@@ -77,15 +93,3 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
 4. Ctrl + P : PREVIOUS
 5. Ctrl + D : DELETE
 6. Ctrl + T : TOGGLE STOPWATCH
-
-## Some working images for reference:
-
-<!-- ![0b17573f6003d9839f0b18f4af5f6d6db8ae17b4](https://github.com/maximistic/SlidelyFormApp/assets/110153672/292acaad-e3c3-4048-84b0-74e749f7f782) -->
-
-
-
-
-
-
-
-
