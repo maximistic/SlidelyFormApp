@@ -10,11 +10,11 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
 
 1. **MainForm.vb** has 2 buttons: "View Submissions" and "Create New Submission".
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/1afa98ca-7f7a-4b02-8e60-81931bc248de" alt="MainForm" width="300" height="200">
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/1afa98ca-7f7a-4b02-8e60-81931bc248de" alt="MainForm" width="350" height="300">
     
 2. Clicking the "View Submissions" button opens up a form ("ViewSubmissionsForm.vb") to view previous submissions made by the user.
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/b73f1fc7-02fe-4947-b4cb-8b9e1ae6aa5f" alt="ViewSubmissionsForm" width="300" height="200"> 
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/b73f1fc7-02fe-4947-b4cb-8b9e1ae6aa5f" alt="ViewSubmissionsForm" width="350" height="300"> 
 
     * **ViewSubmissionsForm.vb** form has four buttons - "Previous", "Next", "Search", and "Delete".
 
@@ -25,7 +25,7 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
 
 3. Clicking the "Create New Submission" button opens up a form to create submissions.
 
-    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/17fc0523-1a1d-4e2d-8893-5098cf1452f5" alt="CreateSubmissionForm" width="300" height="200">
+    <img src="https://github.com/maximistic/SlidelyFormApp/assets/110153672/17fc0523-1a1d-4e2d-8893-5098cf1452f5" alt="CreateSubmissionForm" width="350" height="300">
 
     * It has editable fields for Name, Email, Phone Number, and a GitHub repo link. This form also has a button that resumes and pauses a stopwatch.
 
