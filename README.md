@@ -23,6 +23,11 @@ A Sleek Windows Forms application that brings the Functionality of a basic Googl
     2. /submit - A POST request with parameters "name", "email", "phone", "github_link" and "stopwatch_time"
     3. /read - A GET request with query parameter "index" which is a 0-index for reading the (index+1)th form submission.
 
+## Prerequisites
+1. Visual Studio with .NET Framework
+2. Newtonsoft.Json (NuGet packages)
+3. Node js
+
 ## How to Install and use this project
 
 1. Clone the Repository
